@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://niklasbubeck.github.io/rethinking-medical-tokenization/">Project page</a> ·
-  Paper (coming soon) ·
+  <a href="https://arxiv.org/pdf/2609.24691">Paper</a> ·
   Weights (coming soon) ·
   <a href="#citation">BibTeX</a>
 </p>
