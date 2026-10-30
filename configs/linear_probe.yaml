@@ -1,0 +1,40 @@
+# Linear probing defaults. Override any field via CLI:
+#   python linear_probing.py --config configs/linear_probe.yaml \
+#       --models discrete.rqvae.f8_d4_e16384 continuous.aekl.f8_d4 \
+#       epochs=80 lr=5e-4
+
+# Where the trained encoders live.
+# Resolves to <base_dir>/outputs/<project>/<model_name>/
+base_dir: ${oc.env:RMT_BASE_DIR,.}
+project: ${oc.env:RMT_PROJECT,tokenizers}
+
+# MedMNIST data root (must match what the encoders were trained against).
+data_root: ${oc.env:MEDMNIST_ROOT,data/medmnist}
+image_size: 224
+
+# Models and datasets
+models: []          # filled in via --models on the CLI
+datasets: null      # null = all 12 2D datasets; otherwise list explicitly
+ckpt: null          # int step or null = latest
+
+# Feature extraction
+# `flatten` keeps full spatial/sequence info; can blow up for continuous f4 latents
+# (e.g. aekl.f4_d32 -> 100k feature dim). The probe streams batches CPU->GPU so
+# it scales, but disk cache size grows accordingly.
+pooling: flatten    # flatten | mean | cls
+batch_size: 256
+num_workers: 8
+device: cuda
+
+# Linear head training
+normalize_features: true
+epochs: 50
+head_batch_size: 1024
+lr: 1.0e-3
+weight_decay: 0.0
+seed: 0
+verbose: true
+
+# Output
+run_name: null      # null -> auto: probe_YYYYMMDD_HHMMSS
+aggregate_dir: null # null -> <base_dir>/probing/<run_name>/

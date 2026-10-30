@@ -1,0 +1,132 @@
+# DiT-B/2 generator config, trained on the frozen latents of a tokenizer.
+# Reconstructed from the saved training configs and verified against the
+# optimizer/scheduler state stored in the checkpoints.
+#
+#   python train_dit.py --model discrete.rqvae.f8_d4_e16384
+#
+# `bs` is per GPU; the paper used 2 GPUs (global batch 256). The two DiTs that
+# were retrained (RQVAE f=8, SoftVQ f=16) used bs=32 and a 100-step warmup:
+#   --bs 32 scheduler.warm_up_steps=[100]
+
+seed: 42
+# MedMNIST+ .npz files ($MEDMNIST_ROOT); downloaded on first use if missing.
+data_path: ${oc.env:MEDMNIST_ROOT,data/medmnist}
+ds_names:
+- pathmnist
+- chestmnist
+- dermamnist
+- octmnist
+- pneumoniamnist
+- retinamnist
+- breastmnist
+- bloodmnist
+- tissuemnist
+- organamnist
+- organcmnist
+- organsmnist
+# Runs are written to <base_dir>/outputs/<project_name>/<run>/.
+base_dir: ${oc.env:RMT_BASE_DIR,.}
+project_name: ${oc.env:RMT_PROJECT,tokenizers}
+bs: 128
+accelerator:
+  _target_: accelerate.Accelerator
+  split_batches: false
+  mixed_precision: bf16
+  log_with: wandb
+metrics:
+- _target_: src.metrics.metrics.MSEMetric
+- _target_: src.metrics.metrics.MAEMetric
+- _target_: src.metrics.metrics.SSIMMetric
+  spatial_dims: 2
+- _target_: src.metrics.metrics.PSNRMetric
+diffusion:
+  _target_: src.diffusion.create_gaussian_diffusion
+  steps: 1000
+  learn_sigma: true
+  sigma_small: false
+  noise_schedule: linear
+  use_kl: false
+  predict_xstart: false
+  rescale_timesteps: false
+  rescale_learned_sigmas: false
+  timestep_respacing: ''
+trainer:
+  _target_: src.trainers.dit_trainer.MedTokDiTTrainer
+  n_epochs: 40000
+  log_interval: 10
+  save_interval: 10
+  eval_bs: 16
+  input_key: image
+  use_profiler: false
+  grad_clip_norm: 1.0
+  normalize: false
+loss:
+  _target_: src.losses.VQLPIPSWithDiscriminator
+  reconstruction_loss: l2
+  disc_in_channels: 3
+  disc_start: 200000
+  disc_weight: 0.01
+  disc_adaptive_weight: true
+  disc_warmup: 50000
+  use_diff_aug: true
+  disc_cr_loss_weight: 4.0
+  lecam_loss_weight: 0.001
+  perceptual_weight: 0.01
+  perceptual_loss: vgg
+  perceptual_warmup: 50000
+  dims: 2
+scheduler:
+  _target_: src.schedulers.lr_scheduler.MultiCycleLinearScheduler
+  warm_up_steps:
+  - 10000
+  cycle_lengths:
+  - 1000000000000
+  start_lr:
+  - 0.01
+  max_lr:
+  - 1.0
+  min_lr:
+  - 1.0
+  mode: step
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  betas:
+  - 0.9
+  - 0.95
+earlystop:
+  _target_: src.early_stop.MultiMetricEarlyStopping
+  patience: 500
+  metrics_config:
+    ema_generation-1:
+    - - frechet_inception_distance
+      - min
+      - 1
+evaluator:
+  _target_: src.evaluators.base_evaluator.CompositeEvaluator
+  tasks:
+  - _target_: src.evaluators.dit_evaluator.MedTokDiTCondGeneration
+    save_as:
+    - png
+    name: generation-1
+    input_key: image
+    metrics:
+    - _target_: src.metrics.metrics.MSEMetric
+    - _target_: src.metrics.metrics.MAEMetric
+    - _target_: src.metrics.metrics.SSIMMetric
+      spatial_dims: 2
+    - _target_: src.metrics.metrics.PSNRMetric
+    n_samples: 32
+    sampler: ddpm
+    cfg_scale: 3.5
+    diffusion_cfg:
+      _target_: src.diffusion.create_gaussian_diffusion
+      steps: 1000
+      learn_sigma: true
+      sigma_small: false
+      noise_schedule: linear
+      use_kl: false
+      predict_xstart: false
+      rescale_timesteps: false
+      rescale_learned_sigmas: false
+      timestep_respacing: '100'

@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Run outputs, data and downloaded assets
+outputs/
+data/
+analysis_out/
+wandb/
+*.pt
+*.pth
+*.ckpt
+*.npz
+
+# Misc
+.DS_Store
+*.bak
+*.log

@@ -1,0 +1,43 @@
+# Defaults for the codebook-misalignment t-SNE plots (paper Fig. 3).
+# Override any field via CLI flags or OmegaConf-style key=value:
+#   python codebook_misalignment.py --config configs/codebook_misalignment.yaml \
+#       --models discrete.vq.f16_d8_e16384 discrete.simvq.f16_d8_e16384 \
+#       perplexity=50 max_latents=8000
+
+# Where the trained encoders live.
+# Resolves to <base_dir>/outputs/<project>/<model_name>/
+base_dir: ${oc.env:RMT_BASE_DIR,.}
+project: ${oc.env:RMT_PROJECT,tokenizers}
+
+# MedMNIST data root (must match what the encoders were trained against).
+data_root: ${oc.env:MEDMNIST_ROOT,data/medmnist}
+image_size: 224
+
+# Models and datasets.
+# Only discrete.* models have a codebook; continuous.* and token.* are skipped.
+models: []          # filled in via --models on the CLI
+datasets: null      # null = all 12 2D datasets; otherwise list explicitly
+ckpt: null          # int step or null = latest
+split: test         # which MedMNIST split to draw latents from
+
+# Encoder forward pass
+batch_size: 256
+num_workers: 8
+device: cuda
+
+# Plot / t-SNE settings
+max_latents: 100000  # max pre-quant latent vectors per cell (pooled or per-dataset)
+max_codebook: 15000  # max *used* codebook entries plotted per cell (subsample if more)
+perplexity: 30
+seed: 0
+
+# t-SNE scope
+# When true: pool latents from ALL datasets into one t-SNE per model,
+#            color points by dataset, plot a single "pooled.png" per model.
+# When false: one t-SNE per (model, dataset): the original behavior.
+pool_datasets: true
+color_by_dataset: true
+
+# Output
+run_name: null      # null -> auto: misalign_YYYYMMDD_HHMMSS
+aggregate_dir: null # null -> <base_dir>/probing/<run_name>/

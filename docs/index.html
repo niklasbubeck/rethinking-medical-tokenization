@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>What Makes a Good Medical Image Tokenizer?</title>
+<meta name="description" content="A systematic evaluation of medical image tokenizers: thirty configurations across ten families on twelve MedMNIST+ datasets at three compression factors (WACV 2027)." />
+<meta property="og:title" content="What Makes a Good Medical Image Tokenizer? (WACV 2027)" />
+<meta property="og:description" content="Reconstruction predicts generation in medical imaging; codebook usage hides latent collapse; memorization is mild; discretization preserves downstream information." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #fafafa;
+    --bg-card: #f7f7f8;
+    --text: #363636;
+    --text-strong: #1a1a1a;
+    --text-muted: #6b7280;
+    --rule: #e6e6e8;
+    --rule-soft: #f0f0f2;
+    --link: #1f6feb;
+    --link-hover: #0a4fc4;
+    --accent: #1f6feb;
+    --pill: #1a1a1a;
+    --pill-hover: #1f6feb;
+    --sans: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif: "Noto Serif", "Iowan Old Style", Georgia, serif;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { color: var(--link-hover); text-decoration: underline; }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .container.narrow { max-width: 820px; }
+
+  /* ================= Hero ================= */
+  .hero {
+    text-align: center;
+    padding: 64px 24px 32px;
+  }
+  .hero .venue-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(31, 111, 235, 0.08);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(28px, 4.2vw, 44px);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: var(--text-strong);
+    margin: 0 0 6px;
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero h1 .quest-mark {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .hero .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin: 12px auto 0;
+    line-height: 1.45;
+  }
+
+  .authors {
+    margin-top: 26px;
+    font-size: 17px;
+    color: var(--text-strong);
+    line-height: 1.7;
+  }
+  .authors .author {
+    margin: 0 6px;
+    font-weight: 500;
+  }
+  .authors .author sup {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 1px;
+  }
+  .affiliations {
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+  .affiliations span { margin: 0 8px; }
+  .affiliations sup { margin-right: 2px; color: var(--accent); }
+
+  /* ================= Buttons ================= */
+  .buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--pill);
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .btn:hover {
+    background: var(--pill-hover);
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+  .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .btn.disabled {
+    background: #d1d5db;
+    color: #6b7280;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  .btn.disabled:hover { background: #d1d5db; transform: none; }
+
+  /* ================= Teaser ================= */
+  .teaser {
+    margin: 40px auto 0;
+    padding: 0 24px;
+    max-width: 1040px;
+  }
+  .teaser-figure {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 28px 24px 24px;
+  }
+  img.teaser-figure { width: 100%; height: auto; display: block; box-sizing: border-box; }
+
+  /* ================= TL;DR divider ================= */
+  .tldr-wrap {
+    margin: 56px auto 0;
+    padding: 0 24px;
+  }
+  .tldr {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 22px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .tldr b {
+    font-family: var(--sans);
+    font-weight: 700;
+    color: var(--text-strong);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+
+  /* ================= Sections ================= */
+  section.block {
+    padding: 56px 0 8px;
+  }
+  section.block h2 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--text-strong);
+    text-align: center;
+    margin: 0 0 28px;
+    letter-spacing: -0.005em;
+  }
+  section.block p {
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 0 0 14px;
+  }
+  section.block p.body { max-width: 760px; margin-left: auto; margin-right: auto; }
+  section.block p b { color: var(--text-strong); font-weight: 600; }
+
+  /* ================= Findings cards ================= */
+  .findings {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 16px;
+  }
+  .finding {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 22px 22px 20px;
+  }
+  .finding .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .finding h3 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.35;
+    color: var(--text-strong);
+    margin: 4px 0 10px;
+  }
+  .finding p {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text);
+    margin: 0;
+  }
+  .finding .metric {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule-soft);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+  }
+
+  /* ================= Stats strip ================= */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 24px 18px 20px;
+    text-align: center;
+  }
+  .stat .num {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .stat .label {
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-strong);
+    letter-spacing: 0.02em;
+  }
+  .stat .sub {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* ================= Families grid ================= */
+  .families {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .fam {
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    padding: 14px 16px 14px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .fam:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .fam .name {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+  .fam .name .baseline {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: rgba(31, 111, 235, 0.1);
+    color: var(--accent);
+    font-family: var(--sans);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    vertical-align: middle;
+  }
+  .fam .desc {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* ================= Method two-col ================= */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 32px;
+    align-items: start;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .two-col .col-text p { margin-bottom: 14px; }
+  .axes-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 22px 22px 18px;
+  }
+  .axes-card .head {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .axes-card ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .axes-card li {
+    margin-bottom: 10px;
+    padding-left: 16px;
+    position: relative;
+  }
+  .axes-card li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  .axes-card li b { color: var(--text-strong); font-weight: 600; }
+
+  /* ================= Figures CTA ================= */
+  .figures-cta {
+    text-align: center;
+    margin-top: 16px;
+  }
+  .figures-cta p { max-width: 720px; margin: 0 auto 22px; }
+  .figures-cta .btn { margin: 0; }
+
+  /* ================= Embedded figure pack ================= */
+  .results-wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  figure.fig { margin: 0 0 56px; background: transparent; }
+  figure.fig:last-child { margin-bottom: 0; }
+  figure.fig .head {
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule-soft);
+    margin-bottom: 16px;
+  }
+  figure.fig .tag {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  figure.fig .title {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.3;
+    color: var(--text-strong);
+  }
+  figure.fig figcaption {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-top: 14px;
+    max-width: 1080px;
+  }
+  figure.fig figcaption b { color: var(--text-strong); font-weight: 600; }
+  figure.fig .panel {
+    background: #ffffff;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 22px 22px 18px;
+    overflow-x: auto;
+  }
+  figure.fig .panel .loading {
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 40px;
+    text-align: center;
+  }
+  /* SVG defaults */
+  figure.fig svg { display: block; overflow: visible; }
+  .axis-label { font-family: var(--sans); font-size: 10px; fill: var(--text); font-weight: 500; }
+  .axis-title { font-family: var(--sans); font-size: 11px; fill: var(--text-strong); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .tick { stroke: var(--text-muted); stroke-width: 0.5; }
+  .gridline { stroke: var(--rule-soft); stroke-width: 0.5; }
+  .frame { stroke: var(--text-strong); stroke-width: 1; fill: none; }
+  .num { font-family: var(--mono); font-size: 10px; fill: var(--text-strong); font-feature-settings: "tnum"; }
+  .small { font-family: var(--sans); font-size: 9px; fill: var(--text); }
+  .legend-text { font-family: var(--sans); font-size: 10.5px; fill: var(--text-strong); }
+  .heat-cell-text { font-family: var(--mono); font-size: 9px; }
+  .panel-label { font-family: var(--sans); font-size: 11px; font-weight: 700; fill: var(--text-strong); letter-spacing: 0.08em; }
+
+  /* Tabs (used by some multi-metric figures) */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin: -8px -8px 16px;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 4px;
+  }
+  .tab {
+    padding: 9px 16px 11px;
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab:hover { color: var(--text-strong); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab .sub { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--text-muted); margin-left: 4px; font-size: 10px; }
+  .tab.active .sub { color: var(--text); }
+
+  /* Multi-metric stacked sections (Figure 1) */
+  .metric-section { margin-bottom: 32px; }
+  .metric-section:last-child { margin-bottom: 4px; }
+  .metric-section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 0 8px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .metric-letter {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--accent);
+  }
+  .metric-name {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-strong);
+  }
+  .metric-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+  .metric-arrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: auto;
+    letter-spacing: 0.04em;
+  }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .stack { display: flex; flex-direction: column; gap: 22px; }
+
+  /* ================= BibTeX ================= */
+  .bibtex-wrap { max-width: 820px; margin: 0 auto; }
+  pre.bibtex {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text-strong);
+    overflow-x: auto;
+    margin: 0;
+    white-space: pre;
+  }
+
+  /* ================= Footer ================= */
+  footer.foot {
+    margin-top: 80px;
+    padding: 24px 24px 32px;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  footer.foot a { color: var(--text-muted); }
+  footer.foot a:hover { color: var(--accent); }
+  footer.foot .ack {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* ================= Responsive ================= */
+  @media (max-width: 880px) {
+    .hero { padding: 48px 18px 24px; }
+    .findings { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .families { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    body { font-size: 16px; }
+    .hero h1 { font-size: 28px; }
+    .families { grid-template-columns: 1fr; }
+    .buttons { gap: 8px; }
+    .btn { padding: 9px 14px; font-size: 13px; }
+  }
+  figure.fig .panel img { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+
+  <!-- ================== HERO ================== -->
+  <header class="hero">
+    <span class="venue-pill">WACV 2027</span>
+    <h1>What Makes a Good Medical Image Tokenizer?<br/>Rethinking Reconstruction and Generation in Medical Image Tokenization</h1>
+
+    <p class="authors">
+      <span class="author">Niklas Bubeck<sup>1,2,3</sup></span>
+      <span class="author">Yundi Zhang<sup>1,3</sup></span>
+      <span class="author">Vasiliki Sideri-Lampretsa<sup>1,3</sup></span>
+      <span class="author">Julian McGinnis<sup>1,3</sup></span>
+      <span class="author">Jiancheng Yang<sup>4,5</sup></span>
+      <span class="author">Daniel Rueckert<sup>1,2,3,6</sup></span>
+      <span class="author">Jiazhen Pan<sup>1,2,3</sup></span>
+    </p>
+    <p class="affiliations">
+      <span><sup>1</sup>School of Computation, Information and Technology, TU Munich</span>
+      <span><sup>2</sup>Munich Center for Machine Learning</span>
+      <span><sup>3</sup>School of Medicine, Klinikum rechts der Isar, TU Munich</span>
+      <span><sup>4</sup>ELLIS Institute Finland</span>
+      <span><sup>5</sup>Aalto University</span>
+      <span><sup>6</sup>Imperial College London</span>
+    </p>
+
+    <div class="buttons">
+      <a class="btn disabled" href="#" aria-disabled="true" title="Paper link coming soon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Paper
+      </a>
+      <a class="btn" href="https://github.com/niklasbubeck/rethinking-medical-tokenization">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.02c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.68 1.25 3.34.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a10.97 10.97 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.26 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        Code
+      </a>
+      <a class="btn disabled" href="#" aria-disabled="true" title="Weights coming soon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Weights
+      </a>
+    </div>
+  </header>
+
+  <!-- ================== TEASER ================== -->
+  <div class="teaser">
+    <img class="teaser-figure" src="assets/fig2_correlations.png"
+         alt="Reconstruction versus generation quality for natural images (left) and medical images (right)." />
+  </div>
+
+  <!-- ================== TL;DR ================== -->
+  <div class="tldr-wrap">
+    <p class="tldr">
+      <b>TL;DR</b> In medical imaging, a tokenizer's reconstruction quality strongly predicts its generation quality (r = 0.82),
+      unlike prior reports on natural images. Modern codebooks are fully used but leave most of the latent space unused,
+      memorization is mild and shrinks under stronger compression, and discretization largely preserves downstream information.
+    </p>
+  </div>
+
+  <!-- ================== ABSTRACT ================== -->
+  <section class="block">
+    <div class="container narrow">
+      <h2>Abstract</h2>
+      <p class="body">
+        Latent diffusion models now dominate medical image generation, and every such pipeline rests on a <i>tokenizer</i>
+        that compresses images into the latent codes for image generation to operate on. Thereby, the tokenizer choice bounds
+        every downstream task from reconstruction fidelity and generation quality to the representations available for
+        downstream analysis. Yet, medical imaging pipelines routinely utilize tokenizers from natural imaging on the hypothesis
+        that their behavior carries over. However, this is an assumption never tested in the medical imaging regime, where
+        datasets are orders of magnitude smaller and images exhibit far lower inter-sample variance.
+      </p>
+      <p class="body">
+        We present a systematic evaluation of medical image tokenizers evaluating thirty configurations across ten model
+        families on twelve datasets at three compression factors, spanning reconstruction, generation, latent geometry,
+        downstream classification, and memorization. We find that (1) performance on image reconstruction and generation
+        strongly correlate, unlike prior reports on natural images; (2) modern tokenizers use nearly all of their codebook
+        entries, but still leave most of the latent space unused; (3) training-set memorization is mild and is further
+        suppressed by stronger latent space compression; and (4) discrete quantization can largely preserve downstream
+        classification, with lookup-free schemes being the main exception.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================== SCOPE ================== -->
+  <section class="block">
+    <div class="container">
+      <h2>Scope</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="num">30</div>
+          <div class="label">Tokenizer configurations</div>
+          <div class="sub">8 discrete families + continuous and soft baselines</div>
+        </div>
+        <div class="stat">
+          <div class="num">12</div>
+          <div class="label">MedMNIST+ datasets</div>
+          <div class="sub">pathology, radiology, dermatology, ophthalmology, microscopy</div>
+        </div>
+        <div class="stat">
+          <div class="num">3</div>
+          <div class="label">Compression factors</div>
+          <div class="sub">f &isin; {4, 8, 16}, native 224&times;224</div>
+        </div>
+        <div class="stat">
+          <div class="num">60+</div>
+          <div class="label">Trained models</div>
+          <div class="sub">one tokenizer and one DiT-B/2 generator per configuration</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== KEY FINDINGS ================== -->
+  <section class="block">
+    <div class="container">
+      <h2>Key findings</h2>
+      <div class="findings">
+        <div class="finding">
+          <div class="badge">01 · Recon &harr; Gen</div>
+          <h3>Reconstruction strongly predicts generation.</h3>
+          <p>rFID and gFID correlate at <b>r = 0.82</b> (95% CI [0.77, 0.86], n = 360; Spearman &rho; = 0.81), and the
+          relationship holds within every dataset and every compression factor. Reconstruction, which is free to measure,
+          is a usable proxy for generation, which requires training a generator.</p>
+          <div class="metric">r<sub>Pearson</sub> = 0.82</div>
+        </div>
+        <div class="finding">
+          <div class="badge">02 · Geometry</div>
+          <h3>A fully used codebook can hide a collapsed latent.</h3>
+          <p>Reparameterized, residual and lookup-free schemes keep &asymp;100% codebook usage, yet explicit-codebook methods
+          compress their latents onto a thin subspace (stable rank 0.15&ndash;0.54 of d), while lookup-free and continuous
+          latents stay near-isotropic.</p>
+          <div class="metric">stable rank / d</div>
+        </div>
+        <div class="finding">
+          <div class="badge">03 · Memorization</div>
+          <h3>Memorization is mild and shrinks under compression.</h3>
+          <p>Across 720 configurations, copy-rates stay far below the real-data baseline of 0.05 and fall as the bottleneck
+          tightens (SSCD: 0.0065, 0.0052, 0.0039 at f = 4, 8, 16). Elevated cases track low-diversity datasets rather than
+          tokenizer design.</p>
+          <div class="metric">copy-rate &laquo; 0.05</div>
+        </div>
+        <div class="finding">
+          <div class="badge">04 · Downstream</div>
+          <h3>Discretization largely preserves downstream information.</h3>
+          <p>Linear probes on the discrete z<sub>q</sub> match the continuous z<sub>e</sub> to within noise for explicit-codebook,
+          residual and differentiable schemes. Lookup-free binarization (LFQ, BSQ) is the exception, with a consistent gap of
+          0.02&ndash;0.05.</p>
+          <div class="metric">&Delta; = M(z<sub>e</sub>) &minus; M(z<sub>q</sub>)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== METHOD ================== -->
+  <section class="block">
+    <div class="container">
+      <h2>Method</h2>
+      <div class="two-col">
+        <div class="col-text">
+          <p>Every quantizer plugs into the same purely convolutional VQ-GAN encoder-decoder at fixed spatial compression
+          f &isin; {4, 8, 16} and latent channels d &isin; {3, 4, 8}, so per-f differences are attributable to the quantizer
+          alone. All tokenizers share one objective (MSE, LPIPS, and a hinge PatchGAN loss with adaptive weighting),
+          stabilized for small medical datasets with DiffAugment, consistency regularization and a LeCAM penalty.</p>
+          <p>For generation, each autoencoder is frozen and a single DiT-B/2 is trained on its continuous pre-quantization
+          latent z<sub>e</sub>, conditioned on the class label and a learned dataset embedding, so one network serves all
+          twelve datasets. Generating in z<sub>e</sub> avoids tying generation quality to codebook cardinality.</p>
+        </div>
+        <div class="axes-card">
+          <div class="head">Evaluation axes</div>
+          <ul>
+            <li><b>Reconstruction.</b> PSNR, SSIM, LPIPS, rFID and rFMD.</li>
+            <li><b>Generation.</b> gFID and gFMD of DiT-B/2 samples.</li>
+            <li><b>Codebook.</b> Usage, normalized entropy, distortion per bit.</li>
+            <li><b>Latent geometry.</b> Stable rank of the pre-quantization latents.</li>
+            <li><b>Memorization.</b> Calibrated copy-rate and nearest-neighbour ratio (SSCD, DINOv2).</li>
+            <li><b>Downstream.</b> Linear probing of z<sub>e</sub> vs. z<sub>q</sub>.</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:18px">FMD (Fr&eacute;chet Medical Distance) replaces the ImageNet Inception-V3 backbone of FID with
+      each dataset's official MedMNIST ResNet-18 classifier, measuring distances in a feature space tuned to that dataset.</p>
+    </div>
+  </section>
+
+  <!-- ================== FAMILIES ================== -->
+  <section class="block">
+    <div class="container">
+      <h2>Tokenizer families</h2>
+      <div class="families">
+        <div class="fam"><div class="name">AEKL <span class="baseline">continuous</span></div><div class="desc">KL-regularized autoencoder, as in latent diffusion.</div></div>
+        <div class="fam"><div class="name">SoftVQ <span class="baseline">soft</span></div><div class="desc">Temperature-scaled soft assignment to codewords.</div></div>
+        <div class="fam"><div class="name">VQGAN</div><div class="desc">Hard nearest-neighbour lookup with a straight-through estimator.</div></div>
+        <div class="fam"><div class="name">SimVQ</div><div class="desc">Codebook reparameterized through one linear layer.</div></div>
+        <div class="fam"><div class="name">SimQINCo</div><div class="desc">Implicit neural codebook generated by a small MLP.</div></div>
+        <div class="fam"><div class="name">RQVAE</div><div class="desc">Residual quantization over four stages.</div></div>
+        <div class="fam"><div class="name">DiVeQ</div><div class="desc">Differentiable VQ via a reparameterized error vector.</div></div>
+        <div class="fam"><div class="name">SF-DiVeQ</div><div class="desc">Space-filling DiVeQ, quantizing onto codeword segments.</div></div>
+        <div class="fam"><div class="name">LFQ</div><div class="desc">Lookup-free per-dimension binarization.</div></div>
+        <div class="fam"><div class="name">BSQ</div><div class="desc">Binary spherical quantization on the unit hypersphere.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== RESULTS ================== -->
+  <section class="block">
+    <div class="container">
+      <h2>Results</h2>
+      <div class="results-wrap">
+        <figure class="fig">
+          <div class="head"><span class="tag">Figure 2</span><span class="title">Reconstruction predicts generation in medical imaging</span></div>
+          <div class="panel"><img src="assets/fig2_correlations.png" alt="Reconstruction vs. generation correlation, natural and medical images" /></div>
+          <figcaption>Reconstruction versus generation performance across compression factors and datasets, for natural images
+          (left, numbers reported by prior work) and medical images (right), with Pearson and Spearman fits.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="head"><span class="tag">Supplement</span><span class="title">The relationship holds at every compression factor</span></div>
+          <div class="panel"><img src="assets/figS_correlations_percompression.png" alt="Correlation per compression factor" /></div>
+          <figcaption>rFID (top) and PSNR (bottom) against gFID, one panel per compression factor (n = 120 each).</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="head"><span class="tag">Figure 4</span><span class="title">Codebook utilization and latent geometry are decoupled</span></div>
+          <div class="panel"><img src="assets/fig4_usage_rank.png" alt="Probe gap, codebook usage and stable rank per family" /></div>
+          <figcaption>Probe gap (top), codebook usage (middle) and stable rank / d (bottom) per family and compression.
+          Near-full utilization coexists with low-rank latents.</figcaption>
+        </figure>
+        <figure class="fig">
+          <div class="head"><span class="tag">Figure 5</span><span class="title">Memorization is mild and weakens under stronger compression</span></div>
+          <div class="panel"><img src="assets/fig5_memorization.png" alt="Copy-rate and nearest-neighbour ratio vs. compression" /></div>
+          <figcaption>Copy-rate (top) and nearest-neighbour distance ratio (bottom) per compression factor with SSCD and DINOv2
+          features. Rates remain far below the real-data baseline (dashed) and decrease as the bottleneck tightens.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== GUIDE ================== -->
+  <section class="block">
+    <div class="container narrow">
+      <h2>Practitioner's guide</h2>
+      <p class="body">Within our evaluated setting:</p>
+      <p class="body"><b>Reconstruction still has headroom.</b> It has not saturated and tends to predict generation, so it is
+      a reasonable lever to keep improving, with limited privacy risk given that memorization remains mild.</p>
+      <p class="body"><b>Discrete tokenizers are competitive substrates for continuous-latent diffusion.</b> They tend to match
+      or outperform the continuous baseline on reconstruction and generation while preserving downstream utility.</p>
+      <p class="body"><b>Residual quantization is a strong default.</b> RQVAE performs well across compression factors, though
+      part of its edge is structural: it spends several codebook levels per token, hence more bits than single-codebook methods.</p>
+      <p class="body">The study covers 2D data with a single DiT-B/2 generator; volumetric data, generator scaling and
+      autoregressive modeling of the discrete codes remain open.</p>
+    </div>
+  </section>
+
+  <!-- ================== BIBTEX ================== -->
+  <section class="block">
+    <div class="container">
+      <h2>BibTeX</h2>
+      <div class="bibtex-wrap">
+<pre class="bibtex">@inproceedings{bubeck2027tokenizer,
+  title     = {What Makes a Good Medical Image Tokenizer? Rethinking Reconstruction
+               and Generation in Medical Image Tokenization},
+  author    = {Bubeck, Niklas and Zhang, Yundi and Sideri-Lampretsa, Vasiliki and
+               McGinnis, Julian and Yang, Jiancheng and Rueckert, Daniel and Pan, Jiazhen},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of
+               Computer Vision (WACV)},
+  year      = {2027}
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="https://github.com/niklasbubeck/rethinking-medical-tokenization">github.com/niklasbubeck/rethinking-medical-tokenization</a>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+# Tokenizer training config, as used for all 30 tokenizers in the paper.
+# Reconstructed from the saved training configs and verified against the
+# optimizer/scheduler state stored in the checkpoints.
+#
+#   python train_tokenizer.py --model discrete.rqvae.f8_d4_e16384
+#
+# `bs` is per GPU; the paper used 2 GPUs (global batch 64). SoftVQ (all f) and
+# SF-DiVeQ f=4 were trained with bs=24 (pass --bs 24 to match).
+# Any key can be overridden from the CLI, e.g. optimizer.gen.lr=1e-4.
+
+seed: 42
+# MedMNIST+ .npz files ($MEDMNIST_ROOT); downloaded on first use if missing.
+data_path: ${oc.env:MEDMNIST_ROOT,data/medmnist}
+ds_names:
+- pathmnist
+- chestmnist
+- dermamnist
+- octmnist
+- pneumoniamnist
+- retinamnist
+- breastmnist
+- bloodmnist
+- tissuemnist
+- organamnist
+- organcmnist
+- organsmnist
+# Runs are written to <base_dir>/outputs/<project_name>/<run>/.
+base_dir: ${oc.env:RMT_BASE_DIR,.}
+project_name: ${oc.env:RMT_PROJECT,tokenizers}
+bs: 32
+accelerator:
+  _target_: accelerate.Accelerator
+  split_batches: false
+  mixed_precision: bf16
+  log_with: wandb
+metrics:
+- _target_: src.metrics.metrics.MSEMetric
+- _target_: src.metrics.metrics.MAEMetric
+- _target_: src.metrics.metrics.SSIMMetric
+  spatial_dims: 2
+- _target_: src.metrics.metrics.PSNRMetric
+trainer:
+  _target_: src.trainers.vqgan_trainer.VQGANTrainer
+  n_epochs: 40000
+  log_interval: 1
+  save_interval: 1
+  eval_bs: 16
+  normalize: false
+  input_key: image
+  use_profiler: false
+  evaluate_train: false
+  grad_clip_norm: 1.0
+loss:
+  _target_: src.losses.VQLPIPSWithDiscriminator
+  reconstruction_loss: l2
+  disc_in_channels: 3
+  disc_start: 100000
+  disc_weight: 0.01
+  disc_adaptive_weight: true
+  disc_warmup: 50000
+  use_diff_aug: true
+  disc_cr_loss_weight: 4.0
+  lecam_loss_weight: 0.001
+  perceptual_weight: 0.01
+  perceptual_loss: vgg
+  perceptual_warmup: 50000
+  dims: 2
+scheduler:
+  gen:
+    _target_: src.schedulers.lr_scheduler.MultiCycleCosineScheduler
+    warm_up_steps:
+    - 50000
+    cycle_lengths:
+    - 2000000
+    start_lr:
+    - 0.01
+    max_lr:
+    - 1.0
+    min_lr:
+    - 0.01
+    mode: step
+  disc:
+    _target_: src.schedulers.lr_scheduler.MultiCycleLinearScheduler
+    warm_up_steps:
+    - 0
+    cycle_lengths:
+    - 1000000000000
+    start_lr:
+    - 0.01
+    max_lr:
+    - 1.0
+    min_lr:
+    - 0.01
+    mode: step
+optimizer:
+  gen:
+    _target_: torch.optim.AdamW
+    lr: 5.0e-05
+    weight_decay: 0.005
+  disc:
+    _target_: torch.optim.AdamW
+    lr: 5.0e-05
+    weight_decay: 0.005
+earlystop:
+  _target_: src.early_stop.MultiMetricEarlyStopping
+  patience: 500
+  metrics_config:
+    ema_generation-1:
+    - - frechet_inception_distance
+      - min
+      - 1
+evaluator:
+  _target_: src.evaluators.base_evaluator.CompositeEvaluator
+  tasks:
+  - _target_: src.evaluators.vae_evaluator.VAEReconstruction
+    save_as: null
+    name: vae-reconstruction
+    input_key: image
+    metrics:
+    - _target_: src.metrics.metrics.MSEMetric
+    - _target_: src.metrics.metrics.MAEMetric
+    - _target_: src.metrics.metrics.SSIMMetric
+      spatial_dims: 2
+    - _target_: src.metrics.metrics.PSNRMetric
+    n_samples: 50000
