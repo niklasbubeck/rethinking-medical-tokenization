@@ -72,31 +72,17 @@ def save(sd, dst, meta):
 
 
 def export_pair(src, out, model):
-    """Export the DiT and the tokenizer it was trained with.
-
-    The released tokenizer is the first stage stored inside the DiT checkpoint, so
-    tokenizer and generator always match. For 24 configurations it is identical to
-    the standalone tokenizer checkpoint; for LFQ and BSQ the DiTs were trained on a
-    second compute cluster against that cluster's tokenizer run, which is released.
-    """
+    """Export the DiT and the tokenizer it was trained with (its frozen first stage)."""
     tok_ckpt, dit_ckpt = latest(os.path.join(src, model)), latest(os.path.join(src, f"dit_{model}"))
     num = lambda p: int(re.search(r"ckpt\.(\d+)\.pt$", p).group(1))
     dit = torch.load(dit_ckpt, map_location="cpu", weights_only=False)
     dsd = strip(dit["model"])
     first = {k[len("first_stage."):]: v for k, v in dsd.items() if k.startswith("first_stage.")}
-    tok = torch.load(tok_ckpt, map_location="cpu", weights_only=False)
-    tsd = strip(tok["model"])
-    same = tsd.keys() == first.keys() and all(torch.equal(tsd[k], first[k]) for k in tsd)
-    tmeta = ({"model": model, "kind": "tokenizer", "ckpt": num(tok_ckpt), "steps": tok.get("steps"),
-              "source": "standalone tokenizer run"} if same else
-             {"model": model, "kind": "tokenizer", "ckpt": num(dit_ckpt), "steps": "",
-              "source": "first stage of the DiT checkpoint (tokenizer run the DiT was trained on)"})
-    entry = {"tokenizer": save(tsd if same else first, os.path.join(out, f"tokenizer.{model}.safetensors"), tmeta)}
-    del tok, tsd
+    entry = {"tokenizer": save(first, os.path.join(out, f"tokenizer.{model}.safetensors"),
+                               {"model": model, "kind": "tokenizer", "ckpt": num(tok_ckpt)})}
     gen = {k: v for k, v in dsd.items() if not k.startswith("first_stage.")}
     entry["dit"] = save(gen, os.path.join(out, f"dit.{model}.safetensors"),
-                        {"model": model, "kind": "dit", "ckpt": num(dit_ckpt), "steps": dit.get("steps"),
-                         "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file"})
+                        {"model": model, "kind": "dit", "ckpt": num(dit_ckpt), "steps": dit.get("steps")})
     return entry
 
 
@@ -114,7 +100,7 @@ def main():
     for model in args.models:
         entry = export_pair(args.src, args.out, model)
         for kind, e in entry.items():
-            print(f"{model:38s} {kind:9s} {e['file']} ({e['bytes'] / 1e6:.0f} MB; {e['source']})", flush=True)
+            print(f"{model:38s} {kind:9s} {e['file']} ({e['bytes'] / 1e6:.0f} MB)", flush=True)
         manifest["models"][model] = entry
         with open(MANIFEST, "w") as f:
             json.dump(manifest, f, indent=2)

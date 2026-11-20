@@ -75,11 +75,8 @@ python evaluate_tokenizer.py   --models discrete.rqvae.f8_d4_e16384
 python evaluate_generation.py  --models discrete.rqvae.f8_d4_e16384
 ```
 
-Each tokenizer is the exact frozen tokenizer its DiT was trained on. For LFQ and BSQ the
-generators were trained on a second cluster against a separate training run of the same
-tokenizer configuration; that run is the one released, so reconstruction metrics for these
-six tokenizers can differ from Table 1. File names, checksums and training steps are listed
-in [`tools/checkpoints.json`](tools/checkpoints.json). The weights are for research use and
+File names, checksums and training steps are listed in
+[`tools/checkpoints.json`](tools/checkpoints.json). The weights are for research use and
 not intended for clinical use.
 
 ## Reproducing the paper's tables and figures
@@ -172,8 +169,7 @@ python analysis/collect_rate_distortion.py --f 8
 ```
 
 These write `tokenizer_results.csv` and `dperbit_entropy_f8.csv` to `analysis_out/`; run
-on the paper's checkpoints they reproduce the files in `results/` exactly (for LFQ and BSQ
-reconstruction, see [Pretrained weights](#pretrained-weights)). Linear probing
+on the paper's checkpoints they reproduce the files in `results/` exactly. Linear probing
 writes one `results.csv` per run to `$RMT_BASE_DIR/probing/<run_name>/`;
 `results/linear_probing.csv` collects the paper's runs, with a `run` column naming the
 source run. To make the analysis scripts use your own results, point `RMT_RESULTS` at a
