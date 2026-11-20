@@ -1,0 +1,666 @@
+{
+  "repo": "niklasbubeck/rethinking-medical-tokenization",
+  "tag": "weights-v1",
+  "models": {
+    "continuous.aekl.f4_d3": {
+      "tokenizer": {
+        "file": "tokenizer.continuous.aekl.f4_d3.safetensors",
+        "model": "continuous.aekl.f4_d3",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 299589,
+        "source": "standalone tokenizer run",
+        "bytes": 221269292,
+        "sha256": "0695c9e7b621113fcea66ddb9778a3b195729b41115a7905a662a4d4e50e1d5e"
+      },
+      "dit": {
+        "file": "dit.continuous.aekl.f4_d3.safetensors",
+        "model": "continuous.aekl.f4_d3",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 202500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862020,
+        "sha256": "83a7e579d0cd813b4ed5a1a33dcd6eb036c8fd34f6b64e5f1855c6384bfbd325"
+      }
+    },
+    "continuous.aekl.f8_d4": {
+      "tokenizer": {
+        "file": "tokenizer.continuous.aekl.f8_d4.safetensors",
+        "model": "continuous.aekl.f8_d4",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 331977,
+        "source": "standalone tokenizer run",
+        "bytes": 334641116,
+        "sha256": "d785ae1da9f0b0e93606044caa376f69e44d6bf5d5880e111fec75fe283f65eb"
+      },
+      "dit": {
+        "file": "dit.continuous.aekl.f8_d4.safetensors",
+        "model": "continuous.aekl.f8_d4",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 324000,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092580,
+        "sha256": "64d4862e9b74ce375a7c43161d0673e202d0dbb642ccd43346c8ffadf2558730"
+      }
+    },
+    "continuous.aekl.f16_d8": {
+      "tokenizer": {
+        "file": "tokenizer.continuous.aekl.f16_d8.safetensors",
+        "model": "continuous.aekl.f16_d8",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 461529,
+        "source": "standalone tokenizer run",
+        "bytes": 256994740,
+        "sha256": "042e2ee3070893105416d5aa1626edc7d4a1a0f66088148301d7ff2a68be49b9"
+      },
+      "dit": {
+        "file": "dit.continuous.aekl.f16_d8.safetensors",
+        "model": "continuous.aekl.f16_d8",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 445500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788580,
+        "sha256": "bde88c2ffcaae145e5cb29d28632545f820db2287fab1030b4f1e97759791fbc"
+      }
+    },
+    "continuous.soft_vq.f4_d3_e8192": {
+      "tokenizer": {
+        "file": "tokenizer.continuous.soft_vq.f4_d3_e8192.safetensors",
+        "model": "continuous.soft_vq.f4_d3_e8192",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 323880,
+        "source": "standalone tokenizer run",
+        "bytes": 221312272,
+        "sha256": "7bbcdce22b5c6541f50a75e60c227a5d3b08f380ade641890743ca015bf0fe31"
+      },
+      "dit": {
+        "file": "dit.continuous.soft_vq.f4_d3_e8192.safetensors",
+        "model": "continuous.soft_vq.f4_d3_e8192",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 407025,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862176,
+        "sha256": "501cb1a743c8e50a2c3459f78b045d5f39a2fc61dbd88098a706349f55fbd130"
+      }
+    },
+    "continuous.soft_vq.f8_d4_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.continuous.soft_vq.f8_d4_e16384.safetensors",
+        "model": "continuous.soft_vq.f8_d4_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 421044,
+        "source": "standalone tokenizer run",
+        "bytes": 249861948,
+        "sha256": "cb9e53e88bd85d5625aed118741b728a7e009a1574b13838a35f8d50326cc99c"
+      },
+      "dit": {
+        "file": "dit.continuous.soft_vq.f8_d4_e16384.safetensors",
+        "model": "continuous.soft_vq.f8_d4_e16384",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 710775,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092736,
+        "sha256": "a5aed078721561ba625e6e531ddc71e8fee96c94b2e9b586835c919e635da4c6"
+      }
+    },
+    "continuous.soft_vq.f16_d8_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.continuous.soft_vq.f16_d8_e16384.safetensors",
+        "model": "continuous.soft_vq.f16_d8_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 550596,
+        "source": "standalone tokenizer run",
+        "bytes": 257370836,
+        "sha256": "339be55732058499318bf581d43ff0082e0d17fe04d74b863239f068b019288b"
+      },
+      "dit": {
+        "file": "dit.continuous.soft_vq.f16_d8_e16384.safetensors",
+        "model": "continuous.soft_vq.f16_d8_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 647760,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788736,
+        "sha256": "e8ce1f8c3dae0330740c11e8dbbfa4535d3fd5348f11acee8cbc9c10558d7eab"
+      }
+    },
+    "discrete.vq.f4_d3_e8192": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.vq.f4_d3_e8192.safetensors",
+        "model": "discrete.vq.f4_d3_e8192",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 299589,
+        "source": "standalone tokenizer run",
+        "bytes": 221312272,
+        "sha256": "6c701bb37e5f1fde1612459bf36e9c58edde3cb2adcd2564879568a9467439ee"
+      },
+      "dit": {
+        "file": "dit.discrete.vq.f4_d3_e8192.safetensors",
+        "model": "discrete.vq.f4_d3_e8192",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 202500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862020,
+        "sha256": "12f2f926f92fcecd090ba5b79c180da0947c6a267c8b7fbc36a982e130fb6755"
+      }
+    },
+    "discrete.vq.f8_d4_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.vq.f8_d4_e16384.safetensors",
+        "model": "discrete.vq.f8_d4_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 364365,
+        "source": "standalone tokenizer run",
+        "bytes": 249861948,
+        "sha256": "e7cb31f5e0fb61a53f3f551147a8a35fb30c56e22f54e86366416b0f28b3f792"
+      },
+      "dit": {
+        "file": "dit.discrete.vq.f8_d4_e16384.safetensors",
+        "model": "discrete.vq.f8_d4_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 364500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092580,
+        "sha256": "22ed913ccf677c3cc639ea8ddf5cc275088997d0d0222ccc1e68a172a6e28cc3"
+      }
+    },
+    "discrete.vq.f16_d8_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.vq.f16_d8_e16384.safetensors",
+        "model": "discrete.vq.f16_d8_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 461529,
+        "source": "standalone tokenizer run",
+        "bytes": 257370836,
+        "sha256": "6bd7e6968791bc7c6e74e76b3f008e7b5d647a58ee06d63e09b912d6c3871d41"
+      },
+      "dit": {
+        "file": "dit.discrete.vq.f16_d8_e16384.safetensors",
+        "model": "discrete.vq.f16_d8_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 465750,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788580,
+        "sha256": "c16c65ecd9ff7995bafd382b1838b4c15e51a11e029d6eb4c4b54916170b7a37"
+      }
+    },
+    "discrete.simvq.f4_d3_e8192": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.simvq.f4_d3_e8192.safetensors",
+        "model": "discrete.simvq.f4_d3_e8192",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 291492,
+        "source": "standalone tokenizer run",
+        "bytes": 221312412,
+        "sha256": "5b1fd51c2915eea6b6153980e742df78304ffd7c419771e4bc170c1cec914be4"
+      },
+      "dit": {
+        "file": "dit.discrete.simvq.f4_d3_e8192.safetensors",
+        "model": "discrete.simvq.f4_d3_e8192",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 202500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862020,
+        "sha256": "40443b022590c616c89b0c1e7e489384f0674804653be080d888da14a2fd5274"
+      }
+    },
+    "discrete.simvq.f8_d4_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.simvq.f8_d4_e16384.safetensors",
+        "model": "discrete.simvq.f8_d4_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 364365,
+        "source": "standalone tokenizer run",
+        "bytes": 249862116,
+        "sha256": "8d07ed9b094a4b70f3fe5e6d66be98cd700b61d4f2a927dfdfd2a334db89ce78"
+      },
+      "dit": {
+        "file": "dit.discrete.simvq.f8_d4_e16384.safetensors",
+        "model": "discrete.simvq.f8_d4_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 364500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092588,
+        "sha256": "a24e22721e2935c3fb2dc7d8be41d97f9e8473de256f60703b202567de5b0c92"
+      }
+    },
+    "discrete.simvq.f16_d8_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.simvq.f16_d8_e16384.safetensors",
+        "model": "discrete.simvq.f16_d8_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 453432,
+        "source": "standalone tokenizer run",
+        "bytes": 257371196,
+        "sha256": "e711572c84b2e6aa6016a2c745aff6e609d83a4abccf5a6aabb2151e5ea3180d"
+      },
+      "dit": {
+        "file": "dit.discrete.simvq.f16_d8_e16384.safetensors",
+        "model": "discrete.simvq.f16_d8_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 465750,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788588,
+        "sha256": "f9453f01cdb1fb44c665dc42836bec360521566d1c98fd9c1c0b2c3b7d872f03"
+      }
+    },
+    "discrete.simple_qinco.f4_d3_e8192": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.simple_qinco.f4_d3_e8192.safetensors",
+        "model": "discrete.simple_qinco.f4_d3_e8192",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 291492,
+        "source": "standalone tokenizer run",
+        "bytes": 221583236,
+        "sha256": "983081110067ff3e0a4f5635dd9563c7d979e82d8ff355126bb0d758f6219d91"
+      },
+      "dit": {
+        "file": "dit.discrete.simple_qinco.f4_d3_e8192.safetensors",
+        "model": "discrete.simple_qinco.f4_d3_e8192",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 202500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862028,
+        "sha256": "24a1e8ebf2eebc7606eea7719921d0b1fdaf391225c96cda252cccb9ff2b458e"
+      }
+    },
+    "discrete.simple_qinco.f8_d4_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.simple_qinco.f8_d4_e16384.safetensors",
+        "model": "discrete.simple_qinco.f8_d4_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 364365,
+        "source": "standalone tokenizer run",
+        "bytes": 250134972,
+        "sha256": "f2490d3ecd7e7c863682b804383e430d239b0d80d80c4273dd20be35a4b7fc69"
+      },
+      "dit": {
+        "file": "dit.discrete.simple_qinco.f8_d4_e16384.safetensors",
+        "model": "discrete.simple_qinco.f8_d4_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 364500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092588,
+        "sha256": "b7e28b10e98a65018873196e4406340253762b8ab116b36dbda6409e65c1cba7"
+      }
+    },
+    "discrete.simple_qinco.f16_d8_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.simple_qinco.f16_d8_e16384.safetensors",
+        "model": "discrete.simple_qinco.f16_d8_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 453432,
+        "source": "standalone tokenizer run",
+        "bytes": 257652068,
+        "sha256": "5b73fc48db79bfee3d4d0cf47d05cdecc6769505e40af0ca456829491afcbc68"
+      },
+      "dit": {
+        "file": "dit.discrete.simple_qinco.f16_d8_e16384.safetensors",
+        "model": "discrete.simple_qinco.f16_d8_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 445500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788588,
+        "sha256": "335b7ea42880c02ddef0e1dc135616cd1bc15ab6db1e9080aee23bd6c651d925"
+      }
+    },
+    "discrete.rqvae.f4_d3_e8192": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.rqvae.f4_d3_e8192.safetensors",
+        "model": "discrete.rqvae.f4_d3_e8192",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 267201,
+        "source": "standalone tokenizer run",
+        "bytes": 221607520,
+        "sha256": "0da7cf1e067fce79199ef8a330a2ebb2f3160e2a6742d6b42e270823fe021281"
+      },
+      "dit": {
+        "file": "dit.discrete.rqvae.f4_d3_e8192.safetensors",
+        "model": "discrete.rqvae.f4_d3_e8192",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 202500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862020,
+        "sha256": "2d85772ad699bbdf039f4c4873a86385162cecfa0f89bf8f61bdcc05990bfc1e"
+      }
+    },
+    "discrete.rqvae.f8_d4_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.rqvae.f8_d4_e16384.safetensors",
+        "model": "discrete.rqvae.f8_d4_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 348171,
+        "source": "standalone tokenizer run",
+        "bytes": 250648724,
+        "sha256": "95d6d01f69bce0fad4932a315dd818f14d9352f2dac5555d52721136b3f3f29a"
+      },
+      "dit": {
+        "file": "dit.discrete.rqvae.f8_d4_e16384.safetensors",
+        "model": "discrete.rqvae.f8_d4_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 647760,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092736,
+        "sha256": "c04bc2c647e118eec21be13732b56287d3e21f20a4e97ed2c19ab15fdb84b08f"
+      }
+    },
+    "discrete.rqvae.f16_d8_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.rqvae.f16_d8_e16384.safetensors",
+        "model": "discrete.rqvae.f16_d8_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 445335,
+        "source": "standalone tokenizer run",
+        "bytes": 258944036,
+        "sha256": "51a1cf98e49fb40547147ad31d74135e2bddfbad05318fbd26859b5e77160f7b"
+      },
+      "dit": {
+        "file": "dit.discrete.rqvae.f16_d8_e16384.safetensors",
+        "model": "discrete.rqvae.f16_d8_e16384",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 465750,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788588,
+        "sha256": "a7ba1f93b058b6f52022bf7ed040f17659d3cf0e4f40a1c234efb5e7459a8f2b"
+      }
+    },
+    "discrete.diveq.f4_d3_e8192": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.diveq.f4_d3_e8192.safetensors",
+        "model": "discrete.diveq.f4_d3_e8192",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 283395,
+        "source": "standalone tokenizer run",
+        "bytes": 221377992,
+        "sha256": "502ef467c1bd54951ff7cacf29dec342a81072a00c743b1d57d356f48c80557a"
+      },
+      "dit": {
+        "file": "dit.discrete.diveq.f4_d3_e8192.safetensors",
+        "model": "discrete.diveq.f4_d3_e8192",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 407025,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862176,
+        "sha256": "f49ffae547bbffe753b519f8c7ea5bfa6cba729ba5644940198dc6f41f747135"
+      }
+    },
+    "discrete.diveq.f8_d4_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.diveq.f8_d4_e16384.safetensors",
+        "model": "discrete.diveq.f8_d4_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 356268,
+        "source": "standalone tokenizer run",
+        "bytes": 249993212,
+        "sha256": "7bde055d2c08689e9d44beeed82a095686013b5b7c9947f468dd3d6f065b1a53"
+      },
+      "dit": {
+        "file": "dit.discrete.diveq.f8_d4_e16384.safetensors",
+        "model": "discrete.diveq.f8_d4_e16384",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 710775,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092736,
+        "sha256": "7c5210b9d57be43eb7701979e7573785ac92b7e88a11ec70e536a4336f284f66"
+      }
+    },
+    "discrete.diveq.f16_d8_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.diveq.f16_d8_e16384.safetensors",
+        "model": "discrete.diveq.f16_d8_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 445335,
+        "source": "standalone tokenizer run",
+        "bytes": 257502092,
+        "sha256": "e2e2d91f811da6b4fbc977bd478f4ef86d03993797370237571684050d6ac9c6"
+      },
+      "dit": {
+        "file": "dit.discrete.diveq.f16_d8_e16384.safetensors",
+        "model": "discrete.diveq.f16_d8_e16384",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 670275,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788736,
+        "sha256": "4759e074597b877aad1d757bf437f40a5d03f215be64e3ee92a6eabc09f1443e"
+      }
+    },
+    "discrete.sf_diveq.f4_d3_e8192": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.sf_diveq.f4_d3_e8192.safetensors",
+        "model": "discrete.sf_diveq.f4_d3_e8192",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 377860,
+        "source": "standalone tokenizer run",
+        "bytes": 221312352,
+        "sha256": "d5dae687352241da6a94de1ccebb54b60564f10813de31e189fd51616d4c2a20"
+      },
+      "dit": {
+        "file": "dit.discrete.sf_diveq.f4_d3_e8192.safetensors",
+        "model": "discrete.sf_diveq.f4_d3_e8192",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 285525,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 872862176,
+        "sha256": "5388785c9b2f8701e7f0d1836912b17ab26addbef70ca7631df4d0abd041b5eb"
+      }
+    },
+    "discrete.sf_diveq.f8_d4_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.sf_diveq.f8_d4_e16384.safetensors",
+        "model": "discrete.sf_diveq.f8_d4_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 356268,
+        "source": "standalone tokenizer run",
+        "bytes": 249862036,
+        "sha256": "90e0e9e5217736337adb49106a35114a98ed22a5bc04c08dd49cc7c36174e649"
+      },
+      "dit": {
+        "file": "dit.discrete.sf_diveq.f8_d4_e16384.safetensors",
+        "model": "discrete.sf_diveq.f8_d4_e16384",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 427275,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871092736,
+        "sha256": "390413e2500241269227f051a335d522f0b6af9731a2193ae6f2073a0868e4bc"
+      }
+    },
+    "discrete.sf_diveq.f16_d8_e16384": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.sf_diveq.f16_d8_e16384.safetensors",
+        "model": "discrete.sf_diveq.f16_d8_e16384",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": 445335,
+        "source": "standalone tokenizer run",
+        "bytes": 257370916,
+        "sha256": "ae237f644534c7b814150fd070cc65e2f7a4b900176f9690380e42bf800c71b9"
+      },
+      "dit": {
+        "file": "dit.discrete.sf_diveq.f16_d8_e16384.safetensors",
+        "model": "discrete.sf_diveq.f16_d8_e16384",
+        "kind": "dit",
+        "ckpt": 2,
+        "steps": 548775,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 870788736,
+        "sha256": "22f363e51c490cbde41fc4c96ef5e3aee40e4fead1b0865d56751494061f74e2"
+      }
+    },
+    "discrete.lfq.f4_d10_b10": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.lfq.f4_d10_b10.safetensors",
+        "model": "discrete.lfq.f4_d10_b10",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": "",
+        "source": "first stage of the DiT checkpoint (tokenizer run the DiT was trained on)",
+        "bytes": 221513972,
+        "sha256": "3aa47e7a1e2a3f1daba5213f52fbdc34cfbd15ec871a39b083417e0340e62a65"
+      },
+      "dit": {
+        "file": "dit.discrete.lfq.f4_d10_b10.safetensors",
+        "model": "discrete.lfq.f4_d10_b10",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 202500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 873120440,
+        "sha256": "96bb5a25230852166fd87c8e1f6fc4f1560c6396dfaab357167c4ab4ff9fbfec"
+      }
+    },
+    "discrete.lfq.f8_d14_b14": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.lfq.f8_d14_b14.safetensors",
+        "model": "discrete.lfq.f8_d14_b14",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": "",
+        "source": "first stage of the DiT checkpoint (tokenizer run the DiT was trained on)",
+        "bytes": 250887716,
+        "sha256": "9d9c91a55e04e744fb11de5c914bdf682f455265e4a0ca735780f23277b66f45"
+      },
+      "dit": {
+        "file": "dit.discrete.lfq.f8_d14_b14.safetensors",
+        "model": "discrete.lfq.f8_d14_b14",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 364500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871461696,
+        "sha256": "a408018ed1def30b42e53290156d50b78756d1658e6c3685bd1e0dbb2166f6ff"
+      }
+    },
+    "discrete.lfq.f16_d18_b18": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.lfq.f16_d18_b18.safetensors",
+        "model": "discrete.lfq.f16_d18_b18",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": "",
+        "source": "first stage of the DiT checkpoint (tokenizer run the DiT was trained on)",
+        "bytes": 276091964,
+        "sha256": "3aceac8223ee1ebbd47fd50726f03f00ab69deaad4f710a1839dfae86addc2d0"
+      },
+      "dit": {
+        "file": "dit.discrete.lfq.f16_d18_b18.safetensors",
+        "model": "discrete.lfq.f16_d18_b18",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 465750,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871157696,
+        "sha256": "549d7e3f6796745d7c13a70bf633729bbe4d484649ebd96bd665926801c79fcd"
+      }
+    },
+    "discrete.bsq.f4_d10_b10": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.bsq.f4_d10_b10.safetensors",
+        "model": "discrete.bsq.f4_d10_b10",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": "",
+        "source": "first stage of the DiT checkpoint (tokenizer run the DiT was trained on)",
+        "bytes": 221513972,
+        "sha256": "2c690840db2acb106ceab1cd5a3687b4217ba8ff19388eefb87afb922b598f29"
+      },
+      "dit": {
+        "file": "dit.discrete.bsq.f4_d10_b10.safetensors",
+        "model": "discrete.bsq.f4_d10_b10",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 202500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 873120440,
+        "sha256": "49acee744a1eafa846a7368e9707b2ae7a6b09e7fc4c1f64ef9e02f677aa9992"
+      }
+    },
+    "discrete.bsq.f8_d14_b14": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.bsq.f8_d14_b14.safetensors",
+        "model": "discrete.bsq.f8_d14_b14",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": "",
+        "source": "first stage of the DiT checkpoint (tokenizer run the DiT was trained on)",
+        "bytes": 250887716,
+        "sha256": "99ae5b551a69203bbc56e13f9c44073c52293af7a86bd5ea62b5c340b2e89f10"
+      },
+      "dit": {
+        "file": "dit.discrete.bsq.f8_d14_b14.safetensors",
+        "model": "discrete.bsq.f8_d14_b14",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 344250,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871461696,
+        "sha256": "207756b5410c5f9fa6ded3d1fa72e2654fd34a7b78ce41ab0befffb1448a233c"
+      }
+    },
+    "discrete.bsq.f16_d18_b18": {
+      "tokenizer": {
+        "file": "tokenizer.discrete.bsq.f16_d18_b18.safetensors",
+        "model": "discrete.bsq.f16_d18_b18",
+        "kind": "tokenizer",
+        "ckpt": 1,
+        "steps": "",
+        "source": "first stage of the DiT checkpoint (tokenizer run the DiT was trained on)",
+        "bytes": 276091964,
+        "sha256": "5f06e11e06bbe4d21bd05f534a1417d47cd972f8cf047dd81ad3dd0d61550f9f"
+      },
+      "dit": {
+        "file": "dit.discrete.bsq.f16_d18_b18.safetensors",
+        "model": "discrete.bsq.f16_d18_b18",
+        "kind": "dit",
+        "ckpt": 1,
+        "steps": 445500,
+        "source": "DiT-B/2 and latent scale factor; first stage = tokenizer file",
+        "bytes": 871157696,
+        "sha256": "b64da8f9b029e9e2288d8f06666b4fdf56caf1227498fc67733344d4f1d6e6f0"
+      }
+    }
+  }
+}

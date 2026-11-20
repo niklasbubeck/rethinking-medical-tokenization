@@ -7,6 +7,7 @@ torchvision>=0.16
 # Tokenizer and DiT architectures, pinned to the commit used for the paper.
 medlat @ git+https://github.com/niklasbubeck/MedLat@72e6b5441ade7709c18a1edf11bd65df2316df28
 timm>=0.9
+safetensors>=0.4
 
 # Training
 accelerate>=1.0

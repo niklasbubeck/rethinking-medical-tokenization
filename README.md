@@ -10,7 +10,7 @@
 <p align="center">
   <a href="https://niklasbubeck.github.io/rethinking-medical-tokenization/">Project page</a> ·
   <a href="https://arxiv.org/pdf/2609.24691">Paper</a> ·
-  Weights (coming soon) ·
+  <a href="https://github.com/niklasbubeck/rethinking-medical-tokenization/releases/tag/weights-v1">Weights</a> ·
   <a href="#citation">BibTeX</a>
 </p>
 
@@ -37,6 +37,7 @@ its own DiT-B/2 generator, so only the quantizer varies.
 ## Contents
 
 - [Installation](#installation)
+- [Pretrained weights](#pretrained-weights) (all 30 tokenizers and DiT-B/2 generators)
 - [Reproducing the paper's tables and figures](#reproducing-the-papers-tables-and-figures) (minutes, CPU only)
 - [Running the full pipeline](#running-the-full-pipeline) (train, sample, evaluate)
 - [Configurations and training details](#configurations-and-training-details)
@@ -54,6 +55,32 @@ pip install -r requirements.txt
 
 The tokenizer and DiT architectures come from [MedLat](https://github.com/niklasbubeck/MedLat),
 installed by `requirements.txt` at the exact commit used for the paper.
+
+## Pretrained weights
+
+All 30 tokenizers and their 30 DiT-B/2 generators are attached to the
+[`weights-v1` release](https://github.com/niklasbubeck/rethinking-medical-tokenization/releases/tag/weights-v1)
+as weights-only `.safetensors` files (fp32; about 250 MB per tokenizer and 870 MB per
+generator). The download script checks each file's SHA-256 and writes it in the
+checkpoint layout the scripts expect (`$RMT_BASE_DIR/outputs/$RMT_PROJECT/`), so the
+evaluation commands [below](#2-train-and-evaluate-one-configuration) run unchanged:
+
+```bash
+python tools/download_checkpoints.py --list                                # configurations and sizes
+python tools/download_checkpoints.py --models discrete.rqvae.f8_d4_e16384  # one tokenizer + DiT
+python tools/download_checkpoints.py --kind tokenizer                      # all tokenizers only
+python tools/download_checkpoints.py                                       # everything (about 34 GB)
+
+python evaluate_tokenizer.py   --models discrete.rqvae.f8_d4_e16384
+python evaluate_generation.py  --models discrete.rqvae.f8_d4_e16384
+```
+
+Each tokenizer is the exact frozen tokenizer its DiT was trained on. For LFQ and BSQ the
+generators were trained on a second cluster against a separate training run of the same
+tokenizer configuration; that run is the one released, so reconstruction metrics for these
+six tokenizers can differ from Table 1. File names, checksums and training steps are listed
+in [`tools/checkpoints.json`](tools/checkpoints.json). The weights are for research use and
+not intended for clinical use.
 
 ## Reproducing the paper's tables and figures
 
@@ -145,7 +172,8 @@ python analysis/collect_rate_distortion.py --f 8
 ```
 
 These write `tokenizer_results.csv` and `dperbit_entropy_f8.csv` to `analysis_out/`; run
-on the paper's checkpoints they reproduce the files in `results/` exactly. Linear probing
+on the paper's checkpoints they reproduce the files in `results/` exactly (for LFQ and BSQ
+reconstruction, see [Pretrained weights](#pretrained-weights)). Linear probing
 writes one `results.csv` per run to `$RMT_BASE_DIR/probing/<run_name>/`;
 `results/linear_probing.csv` collects the paper's runs, with a `run` column naming the
 source run. To make the analysis scripts use your own results, point `RMT_RESULTS` at a
@@ -193,7 +221,7 @@ configs/                   training and probing configs
 src/                       trainers, losses, evaluators, diffusion, data
 analysis/                  tables and figures from results/
 results/                   released result tables
-tools/                     asset download, reference dump
+tools/                     asset and checkpoint download, reference dump
 docs/                      project page
 ```
 
